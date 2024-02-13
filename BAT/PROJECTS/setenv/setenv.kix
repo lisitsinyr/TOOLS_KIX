@@ -1,0 +1,36 @@
+;===============================================================
+; SetEnv
+;===============================================================
+
+   BREAK ON
+
+;============================================================
+; Uses
+;============================================================
+   if not $KxlDir Call "\\S73FS01\APPInfo\Tools\KxlDir.kxl" endif
+
+;begin
+
+;   select 
+;      case UCase($Type) = "USER"
+;         Set  "$Name=$Value"
+;      case UCase($Type) = "SYSTEM"
+;         SetM "$Name=$Value"
+;      case 1
+;         SetL "$Name=$Value"
+;   endselect
+
+$y = %IDWTEMP%
+? $y
+get $x
+
+
+   Set "IDWTEMP=p:\temp"
+   SetL "IDWTEMP=p:\temp"
+   SetM "IDWTEMP=p:\temp"
+
+$y = %IDWTEMP%
+? $y
+get $x
+
+;end

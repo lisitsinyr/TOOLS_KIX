@@ -1,0 +1,74 @@
+;=======================================================================================
+; Test.kix
+;=======================================================================================
+
+   BREAK ON
+
+;=======================================================================================
+; Uses
+;=======================================================================================
+   if not $KxlDir Call "\\S73FS01\APPInfo\Tools\KxlDir.kxl" endif
+   Call $KxlDir+"\APPLinks.kxl"
+   Call $KxlDir+"\UDF\LUNet.kxl"
+   Call $KxlDir+"\UDF\LUSupport.kxl"
+   Call $KxlDir+"\UDF\LUStrings.kxl"
+   Call $KxlDir+"\UDF\LUDateTime.kxl"
+
+;=======================================================================================
+
+
+Function AllGlobalGroups()
+;begin
+   $Server = "WinNT://S73FS01"
+   ? "======================================================"
+   ? "1. Все глобальные группы " $Server
+   ? "======================================================"
+   $Objects = GetObject($Server)
+   $Objects.Filter = "group",""
+   for each $Group in $Objects
+      if $Group.GroupType = 2
+
+         $i = 0
+         $Domain = "%USERDOMAIN%"
+         ;? "Группа: " $Domain+"\"+AddCharR(" ", $Group.Name,   30) " "
+         $Users = GroupMembers($Domain, $Group.Name, 2)
+         for each $User in $Users
+            $i = $i + 1
+            ;? "   User: " AddChar(" ", $i, 2) ". " AddCharR(" ", $User,   30) " "
+         next
+         ;? $Domain+"\"+AddCharR(" ", $Group.Name,   30) " " AddChar(" ", $i, 3)
+
+         ;$i = 0
+         $Domain = "DSP"
+         ;? "Группа: " $Domain+"\"+AddCharR(" ", $Group.Name,   30) " "
+         $Users = GroupMembers($Domain, $Group.Name, 2)
+         for each $User in $Users
+            $i = $i + 1
+            ;? "   User: " AddCharR(" ", $User,   30) " "
+         next
+         ;? $Domain+"\"+AddCharR(" ", $Group.Name,   29) " " AddChar(" ", $i, 3)
+
+
+         ? AddCharR(" ", $Group.Name,   30) " " AddChar(" ", $i, 3)
+
+      endif
+   next
+EndFunction
+
+;==================================================================================
+;
+;==================================================================================
+;begin
+   if $Log1 <> ""
+      $Result=RedirectOutput($Log1, 1)
+   endif
+
+   $Log = 30
+   $LogDir = "c:\temp\"
+   $LogFile = "GroupsUsers.log"
+   $LogFile = LogFileName($Log,$LogDir,$LogFile)
+
+   AllGlobalGroups
+
+   $Result = RedirectOutput("")
+;end

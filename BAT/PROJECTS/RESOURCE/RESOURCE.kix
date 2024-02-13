@@ -1,0 +1,286 @@
+;=======================================================================================
+; CountStr
+;=======================================================================================
+   BREAK ON
+
+;=======================================================================================
+; Uses
+;=======================================================================================
+   if not $KxlDir Call "\\S73FS01\APPInfo\Tools\KxlDir.kxl" endif
+   Call $KxlDir+"\UDF\LUFile.kxl"
+   Call $KxlDir+"\UDF\LUSupport.kxl"
+   Call $KxlDir+"\UDF\LUStrings.kxl"
+   Call $KxlDir+"\UDF\LUExcel.kxl"
+
+;=======================================================================================
+;
+;=======================================================================================
+   $FileNameLXLS = "RESOURCE.XLS"
+   GLOBAL $TableAPP[1,0],$TableUserAPP[1,0],$TableGGU[1,0]
+
+   $TableIVR =
+      "1C","1CGARAZH","1COBSHEPIT","1-FS","ACDP","ADTU","AKORD","ASED","ASUR","ATLAS",
+      "BANCOM","BIBL","BKB","BLOC","BUHOT","CONSULTANTPLUS","DOCENT",
+      "EA","EMC","EMISS","EMPLOY","EP","Estimate","EXP","F039",
+      "F3","GranVUR","HEADER","IIS","INDV_EX","IOReport","IPBancom",
+      "ITA","KREDITMB","LICEN","M2","M308","M653","M664","M665","MDClient",
+      "MED","N_RKC","NALOGI","NALUL","NTA","OMET","PASP","PENSION","PLAN",
+      "PROGNOZ","PTKPSD","Realty","SADD","SANCTION","SED","SIBIR","STD","TASTU",
+      "TBSVK","TECH","TRV","VEAR","VKLAD"
+
+   $TableIVR_1 =
+      "POST","REMART","FPS","TOOLS","XCH","HEADER","DOCENT","KEYS","KFM","Kredit",
+      "KREDITMB","SBERSIGN","CONTROLPU","GRANVUS","ISMIB",
+      "AMUR","ASEKR","REMEDY","UOS","UTM","FINEREADER","Book","DocPS","UFEBS","MED",
+
+   $TableIVR_2 =
+      "ARMESN","Licenz","F711","ORDER","P_4","P4","S1","TELIX","MONITOR","UDI","FES",
+      "SAED","Scaner","STROY","Video","VP"
+
+   $TableGRP =
+      "BUHGALTE","COMMON","INSPECTO","Licenziya","ODO","ORKB","OTIZ","Personal",
+      "SEO","UI","UBIZI","DTM","Ulyanovsk"
+
+;=======================================================================================
+; InsertUserAPP
+;=======================================================================================
+function CheckIVR($IVRName)
+;begin
+   $CheckIVR = 0
+   $i = 0
+   while (UCASE($IVRName) <> UCASE($TableIVR[$i])) and ($i < ubound($TableIVR))
+      $i = $i + 1
+   loop
+   if $i < ubound($TableIVR)
+      $CheckIVR = 1
+   endif
+endfunction
+
+;=======================================================================================
+; InsertUserAPP
+;=======================================================================================
+function InsertUserAPP($IVRName)
+;begin
+   $m = -1
+   for $j=1 to ubound($TableUserAPP,2)
+      if $TableUserAPP[0,$j] = $IVRName
+         $m = $J
+      endif
+   next
+   if ($m < 0)
+      REDIM PRESERVE $TableUserAPP[1,$j]
+      $TableUserAPP[0,$j] = $IVRName
+      $TableUserAPP[1,$j] = 1
+   endif
+endfunction
+
+;=======================================================================================
+; InsertAPP
+;=======================================================================================
+function InsertAPP($IVRName)
+;begin
+   $m = -1
+   for $j=1 to ubound($TableAPP,2)
+      if $TableAPP[0,$j] = $IVRName
+         $m = $J
+      endif
+   next
+   if ($m < 0)
+      REDIM PRESERVE $TableAPP[1,$j]
+      $TableAPP[0,$j] = $IVRName
+      $TableAPP[1,$j] = 1 ; count
+   else
+      $TableAPP[1,$m] = $TableAPP[1,$m] + 1 ; count
+   endif
+endfunction
+
+;=======================================================================================
+; InsertGGU
+;=======================================================================================
+function InsertGGU($GGUName)
+;begin
+   $m = -1
+   for $j=1 to ubound($TableGGU,2)
+      if $TableGGU[0,$j] = $GGUName
+         $m = $J
+      endif
+   next
+   if ($m < 0)
+      REDIM PRESERVE $TableGGU[1,$j]
+      $TableGGU[0,$j] = $GGUName
+      $TableGGU[1,$j] = 1 ; count
+   else
+      $TableGGU[1,$m] = $TableGGU[1,$m] + 1 ; count
+   endif
+endfunction
+
+;-------------------------------------------------------------------------------
+; ScanFile ($ASourcePath, $AMask)
+;-------------------------------------------------------------------------------
+function CScanFile ($ASourcePath, $AMask)
+   Dim $LResult
+;begin
+   REDIM PRESERVE $TableAPP[1,0]
+   REDIM PRESERVE $TableGGU[1,0]
+
+   $LFile = Dir ($ASourcePath+"\"+$AMask)
+   WHILE @ERROR = 0 AND $LFile
+      IF $LFile <> "." AND $LFile <> ".."
+         IF (GetFileAttr ($ASourcePath + "\" + $LFile) & 16)=0
+            $LFileNameSource = $ASourcePath + "\" + $LFile
+            $Handle = FreeFileHandle()
+            if $Handle > 0
+               if Open ($Handle, $LFileNameSource) = 0
+                  $i = 0
+
+                  REDIM PRESERVE $TableUserAPP[1,0]
+
+                  $UserName = GetFileNameWithoutExt($LFileNameSource)
+                  $UserDomain = ""
+                  $UserGroup = ""
+                  $Desc = ""
+                  $TrigerOperatingSystem = 0
+                  $Caption = ""
+                  $s = TRIM(ReadLine($Handle))
+                  while @Error = 0
+                     $i = $i + 1
+                     $UserDomain = ExtractWord(1, $s, "\")
+                     $UserGroup = ExtractWord(2, $s, "\")
+                     InsertGGU($S)
+                     if $UserDomain = "DSP" or $UserDomain = "ULNSK"
+                        $UserAPP = $UserGroup
+                        $iAdmin = INSTR($UserAPP, "_Admin")
+                        $iUser = INSTR($UserAPP, "_Users")
+                     else
+                        $UserAPP = ExtractWord(3, $UserGroup, "-")
+                        $iAdmin = INSTR($UserAPP, "_Admin")
+                        if ($iAdmin < 1)
+                           $iAdmin = INSTR($UserAPP, "_AppAdmin")
+                        endif
+                        $iUser = INSTR($UserAPP, "_User")
+                        if ($iUser < 1)
+                           $iUser = INSTR($UserAPP, "_ReaderUser")
+                        endif
+                     endif
+                     if ($iAdmin > 0)
+                        $UserAPP_2 = SUBSTR($UserAPP,1,$iAdmin-1)
+                     else
+                     if ($iUser > 0)
+                        $UserAPP_2 = SUBSTR($UserAPP,1,$iUser-1)
+                     else
+                        $UserAPP_2 = ""
+                     endif
+                     endif
+                     if $UserAPP_2 <> ""
+                        select
+                           case ($UserAPP_2 = "N_RKC") or ($UserAPP_2 = "N_RKC_GU") or 
+                                ($UserAPP_2 = "N_RKC_UI")
+                              $UserAPP_2 = "N_RKC"
+                           case $UserAPP_2 = "INDV_EX"
+                              $UserAPP_2 = "INDV_EX"
+                           case $UserAPP_2 = "F_1K"
+                              $UserAPP_2 = "F_1K"
+                           case ($UserAPP_2 = "P_4") or ($UserAPP_2 = "P4")
+                              $UserAPP_2 = "P_4"
+                           case $UserAPP_2 = "Rabis2IIS"
+                              $UserAPP_2 = "IIS"
+                           case 1
+                              $UserAPP_2 = ExtractWord(1, $UserAPP_2, "_")
+                        endselect
+                        if CheckIVR($UserAPP_2)
+                           InsertUserAPP($UserAPP_2)
+                        endif
+                     endif
+                     $s = TRIM(ReadLine($Handle))
+                  loop
+                  $Res = Close ($Handle)
+                  ? $UserName "=" ubound($TableUserAPP,2)
+                  for $n=1 to ubound($TableUserAPP,2)
+                     InsertAPP($TableUserAPP[0,$n])
+                  next
+                  $j = $j + $i
+               endif
+            endif 
+         endif
+      endif
+      if @ERROR = 0
+         $LFile = Dir("")
+      endif
+   loop
+EndFunction
+
+;-------------------------------------------------------------------------------
+; ScanDir ($ASourcePath, $AMask)
+;-------------------------------------------------------------------------------
+;function CScanDir ($ASourcePath, $AMask)
+;begin
+;   $LFile = Dir ($ASourcePath+"\*.*")
+;   WHILE @ERROR = 0 AND $LFile
+;      IF $LFile <> "." AND $LFile <> ".."
+;         IF GetFileAttr ($ASourcePath + "\" + $LFile) & 16    ; is it a directory ?
+;            $LSourcePath = $ASourcePath + "\" + $LFile
+;            CScanFile($LSourcePath, $AMask)
+;            CScanDir($LSourcePath, $AMask)
+;         endif
+;      endif
+;      if @ERROR = 0
+;         $LFile = Dir("")
+;      endif
+;   loop
+;EndFunction
+
+;-------------------------------------------------------------------------------
+;  Scan ($ASourcePath, $AMask)
+;-------------------------------------------------------------------------------
+function Scan ($ASourcePath, $AMask)
+;begin
+   $j = 0
+   CScanFile ($ASourcePath, $AMask)
+   ;CScanDir  ($LSourcePath, $LMask)
+EndFunction
+
+;------------------------------------------------------------------------
+; BEGIN
+;------------------------------------------------------------------------
+   $SourcePath = "O:\logon\GGU"
+   $Mask = "*.txt"
+ 
+   Scan ($SourcePath, $Mask)
+
+   $objExcelAPP = CreateExcel()
+   OpenWorkbook($objExcelAPP, $FileNameLXLS)
+   $Book = NewWorkbook($objExcelAPP)
+   $objExcelAPP.Sheets("Лист1").Name = "APP"
+   $Row = 1
+   for $j=1 to ubound($TableAPP,2)
+      $objExcelAPP.cells($Row,1).FormulaR1C1 = "=ROW()"
+      $objExcelAPP.cells($Row,2).Value = $TableAPP[0,$j]
+      $objExcelAPP.cells($Row,3).Value = $TableAPP[1,$j]
+      $Row = $Row + 1
+   next
+   $Res = $objExcelAPP.Columns("A:A").EntireColumn.AutoFit
+   $Res = $objExcelAPP.Columns("B:B").EntireColumn.AutoFit
+   $Res = $objExcelAPP.Columns("C:C").EntireColumn.AutoFit
+   ;$objExcelAPP.Cells.Select
+   ;$objExcelAPP.Selection.Sort.Key1 = $objExcelAPP.Range("B1")
+
+ 
+   ;$Book = NewWorkbook($objExcelAPP)
+   ;$objExcelAPP.Sheets("Лист1").Name = "GGU"
+   ;$Row = 1
+   ;for $j=1 to ubound($TableGGU,2)
+   ;   $objExcelAPP.cells($Row,1).FormulaR1C1 = "=ROW()"
+   ;   $objExcelAPP.cells($Row,2).Value = $TableGGU[0,$j]
+   ;   $objExcelAPP.cells($Row,3).Value = $TableGGU[1,$j]
+   ;   $Row = $Row + 1
+   ;next
+   ;$Res = $objExcelAPP.Columns("A:A").EntireColumn.AutoFit
+   ;$Res = $objExcelAPP.Columns("B:B").EntireColumn.AutoFit
+   ;$Res = $objExcelAPP.Columns("C:C").EntireColumn.AutoFit
+
+   ShowExcel($objExcelAPP)
+
+   ;$objExcelAPP.Quit
+;------------------------------------------------------------------------
+; END
+;------------------------------------------------------------------------
