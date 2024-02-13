@@ -86,21 +86,21 @@
    $sZvolgie  = "Zvolgie"
 
    ;=======================================================================================
-   $iInza      = "047310000", "Inza",     "РКЦ Инза"
-   $iNspassk   = "047312000", "Nspassk",  "РКЦ Новоспасское"
-   $iDgrad     = "047311000", "Dgrad",    "РКЦ Димитровград"
-   $iSurskoe   = "047318000", "Surskoe",  "РКЦ Сурское"
-   $iBarysh    = "047305000", "Barysh",   "РКЦ Барыш"
-   $iCherdak   = "047304000", "Cherdak",  "РКЦ Чердаклы"
-   $iKUlatka   = "047303000", "KUlatka",  "РКЦ Кулатка"
-   $iSengiley  = "047315000", "Sengiley", "РКЦ Сенгилеи"
-   $iVeshkajm  = "047322000", "Veshkajm", "РКЦ Вешкаима"
-   $iMajna     = "047323000", "Majna",    "РКЦ Майна"
-   $iZvolgie   = "047309000", "Zvolgie",  "РКЦ Заволжье"
+   $iInza      = "047310000", "Inza",     "Р РљР¦ РРЅР·Р°"
+   $iNspassk   = "047312000", "Nspassk",  "Р РљР¦ РќРѕРІРѕСЃРїР°СЃСЃРєРѕРµ"
+   $iDgrad     = "047311000", "Dgrad",    "Р РљР¦ Р”РёРјРёС‚СЂРѕРІРіСЂР°Рґ"
+   $iSurskoe   = "047318000", "Surskoe",  "Р РљР¦ РЎСѓСЂСЃРєРѕРµ"
+   $iBarysh    = "047305000", "Barysh",   "Р РљР¦ Р‘Р°СЂС‹С€"
+   $iCherdak   = "047304000", "Cherdak",  "Р РљР¦ Р§РµСЂРґР°РєР»С‹"
+   $iKUlatka   = "047303000", "KUlatka",  "Р РљР¦ РљСѓР»Р°С‚РєР°"
+   $iSengiley  = "047315000", "Sengiley", "Р РљР¦ РЎРµРЅРіРёР»РµРё"
+   $iVeshkajm  = "047322000", "Veshkajm", "Р РљР¦ Р’РµС€РєР°РёРјР°"
+   $iMajna     = "047323000", "Majna",    "Р РљР¦ РњР°Р№РЅР°"
+   $iZvolgie   = "047309000", "Zvolgie",  "Р РљР¦ Р—Р°РІРѕР»Р¶СЊРµ"
 
-   $iGRKC      = "047308001", "GRKC",     "Отделение Ульяновск"
-   $iGU        = "047308001", "GU",       "Отделение Ульяновск"
-   $iGU_TEST   = "047308001", "GU_TEST",  "Отделение Ульяновск (TEST)"
+   $iGRKC      = "047308001", "GRKC",     "РћС‚РґРµР»РµРЅРёРµ РЈР»СЊСЏРЅРѕРІСЃРє"
+   $iGU        = "047308001", "GU",       "РћС‚РґРµР»РµРЅРёРµ РЈР»СЊСЏРЅРѕРІСЃРє"
+   $iGU_TEST   = "047308001", "GU_TEST",  "РћС‚РґРµР»РµРЅРёРµ РЈР»СЊСЏРЅРѕРІСЃРє (TEST)"
    $iALL       = "000000000", "ALL",      "ALL"
    $ArrayRKC   = $iInza,$iNspassk,$iDgrad,$iSurskoe,
                  $iBarysh,$iCherdak,$iSengiley,$iMajna,$iKUlatka,$iVeshkajm,$iZvolgie,
@@ -123,7 +123,7 @@
    ;------------------------------------------------------
    if $BIK
       ;-----------------------------------
-      ; Указан $BIK
+      ; РЈРєР°Р·Р°РЅ $BIK
       ;-----------------------------------
       if Len($BIK) < 9
          $BIK = "0"+$BIK
@@ -131,7 +131,7 @@
       $RKC = GetNameRKC($BIK, $RKC)
    else
       ;-----------------------------------
-      ; Указан $RKC и нет $BIK
+      ; РЈРєР°Р·Р°РЅ $RKC Рё РЅРµС‚ $BIK
       ;-----------------------------------
       select
          case UCase($RKC) = "ALL"
@@ -200,7 +200,7 @@ function GetNameRKC(optional $BIK, optional $NameRKC)
    if $BIK
       if $BIK = "047308001"
          ;------------------------------------------------
-         ; Проверка на члена группы
+         ; РџСЂРѕРІРµСЂРєР° РЅР° С‡Р»РµРЅР° РіСЂСѓРїРїС‹
          ;------------------------------------------------
          for Each $ItemRKC in $ArrayRKC
  
@@ -234,7 +234,7 @@ function GetNameRKC(optional $BIK, optional $NameRKC)
       endif
    else
       ;------------------------------------------------
-      ; Проверка на члена группы
+      ; РџСЂРѕРІРµСЂРєР° РЅР° С‡Р»РµРЅР° РіСЂСѓРїРїС‹
       ;------------------------------------------------
       for Each $ItemRKC in $ArrayRKC
          If (IndexOf($arrAllGroupsUser, $Domain+"\"+$ItemRKC[1]) >= 0)
@@ -349,14 +349,14 @@ function SAED($Command, optional $SAEDFiles,
    endif
    ;-----------------------------------------------------
    if not $PWD
-      $PWD = ReadParam("Пароль SAED", "")
+      $PWD = ReadParam("РџР°СЂРѕР»СЊ SAED", "")
    endif
    if $PWD <> ""
       $S = $s + " -q"+$PWD
    endif
    ;-----------------------------------------------------
    if not $PWDPIA
-      $PWDPIA = ReadParam("Пароль PIA", "")
+      $PWDPIA = ReadParam("РџР°СЂРѕР»СЊ PIA", "")
    endif
    if $PWDPIA <> ""
       $S = $s + " -w"+$PWDPIA
@@ -504,9 +504,9 @@ function PRINT(optional $SubNote)
    LogAdd ($Log, $LogFile, "I", "BIK           = "+$BIK)
    LogAdd ($Log, $LogFile, "I", "Name          = "+$NameRKC)
    if IsTerminalApplication = 1
-      LogAdd ($Log, $LogFile, "I", "Режим         = Terminal")
+      LogAdd ($Log, $LogFile, "I", "Р РµР¶РёРј         = Terminal")
    else
-      LogAdd ($Log, $LogFile, "I", "Режим         = Local")
+      LogAdd ($Log, $LogFile, "I", "Р РµР¶РёРј         = Local")
    endif
    if $Data      LogAdd ($Log, $LogFile, "I", "Data          = "+$Data)      endif
    if $DBPath    LogAdd ($Log, $LogFile, "I", "DBPath        = "+$DBPath)    endif
@@ -572,8 +572,8 @@ endfunction
 function ModifLog($MOD, $LABEL, $A_S_APP, optional $APP)
 ;begin
    if not $MOD
-      Write ("w+/n",  "Не указан номер модификации для ИВРПО "+$APP) 
-      $MOD = ReadParam("Модификация "+$APP, TODAY)
+      Write ("w+/n",  "РќРµ СѓРєР°Р·Р°РЅ РЅРѕРјРµСЂ РјРѕРґРёС„РёРєР°С†РёРё РґР»СЏ РР’Р РџРћ "+$APP) 
+      $MOD = ReadParam("РњРѕРґРёС„РёРєР°С†РёСЏ "+$APP, TODAY)
       $LABEL = $MOD
    endif
    if $MOD
@@ -585,7 +585,7 @@ function ModifLog($MOD, $LABEL, $A_S_APP, optional $APP)
          $Result = Close ($Handle)
          $ModifLog = 1
       else
-         LogAdd($Log, $LogFile, "I", "Ошибка записи "+@Error+" "+$FileName)
+         LogAdd($Log, $LogFile, "I", "РћС€РёР±РєР° Р·Р°РїРёСЃРё "+@Error+" "+$FileName)
          $ModifLog = 0
       endif
    
@@ -596,22 +596,22 @@ function ModifLog($MOD, $LABEL, $A_S_APP, optional $APP)
          $Result = Close ($Handle)
          $ModifLog = 1
       else
-         LogAdd($Log, $LogFile, "I", "Ошибка записи "+@Error+" "+$FileName)
+         LogAdd($Log, $LogFile, "I", "РћС€РёР±РєР° Р·Р°РїРёСЃРё "+@Error+" "+$FileName)
          $ModifLog = 0
       endif
    
       $FileName = $A_S_APP+"\VERSION.TXT"
       del $FileName
       if Open ($Handle, $FileName, 1+4) = 0
-         $Result = WriteLine ($Handle, "Модификация "+$APP+" "+$LABEL+@CRLF)
+         $Result = WriteLine ($Handle, "РњРѕРґРёС„РёРєР°С†РёСЏ "+$APP+" "+$LABEL+@CRLF)
          $Result = Close ($Handle)
          $ModifLog = 1
       else
-         LogAdd($Log, $LogFile, "I", "Ошибка записи "+@Error+" "+$FileName)
+         LogAdd($Log, $LogFile, "I", "РћС€РёР±РєР° Р·Р°РїРёСЃРё "+@Error+" "+$FileName)
          $ModifLog = 0
       endif
    else 
-      Writeln ("w+/n",  "Не указан номер модификации для "+$APP) 
+      Writeln ("w+/n",  "РќРµ СѓРєР°Р·Р°РЅ РЅРѕРјРµСЂ РјРѕРґРёС„РёРєР°С†РёРё РґР»СЏ "+$APP) 
       $ModifLog = 0
    endif
 endfunction
@@ -622,9 +622,9 @@ endfunction
 function DisplayInfoMODIF($APP, optional $Message)
 ;begin
    if $Message
-      Pause2(10, $APP+": "+$Message+". Ждите ...")
+      Pause2(10, $APP+": "+$Message+". Р–РґРёС‚Рµ ...")
    else
-      Pause2(10, "Идет модификация программы "+$APP+". Ждите ...")
+      Pause2(10, "РРґРµС‚ РјРѕРґРёС„РёРєР°С†РёСЏ РїСЂРѕРіСЂР°РјРјС‹ "+$APP+". Р–РґРёС‚Рµ ...")
    endif    
 endfunction
 
@@ -655,7 +655,7 @@ endfunction
 
 ;-------------------------------------------------
 ; CheckUser73_FIO 
-;    0 - нет
+;    0 - РЅРµС‚
 ;    1 - GU
 ;    2 - GRKC
 ;    3 - RKC
@@ -748,7 +748,7 @@ function GET_POSTDIR_PTKPSD ($INI_File)
 ;begin
 
    ;-------------------------------------------------------
-   ; Старый вариант
+   ; РЎС‚Р°СЂС‹Р№ РІР°СЂРёР°РЅС‚
    ;-------------------------------------------------------
    if IsTerminalApplication
       $LDomain = @LDomain+"_STD"
@@ -757,7 +757,7 @@ function GET_POSTDIR_PTKPSD ($INI_File)
    endif
 
    ;-------------------------------------------------------
-   ; новый вариант
+   ; РЅРѕРІС‹Р№ РІР°СЂРёР°РЅС‚
    ;-------------------------------------------------------
    $IPAddr = ExtractWord(1,GetIP,"/")
    $LDomain_01 = GET_DOMAIN_USER ($IPAddr)
@@ -777,7 +777,7 @@ function GET_POSTDIR_PTKPSD ($INI_File)
       endif
    endif
    ;-----------------------------------------------------
-   ; по умолчанию
+   ; РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
    ;-----------------------------------------------------
    if $DirName = ""
       $DirName = ReadString ($INI_File, "GROUPS", $LDomain, "")
@@ -786,7 +786,7 @@ function GET_POSTDIR_PTKPSD ($INI_File)
    if EXIST($DirName)
       $GET_POSTDIR_PTKPSD = $DirName + "\POST\TLG_PTK"
    else
-      $GET_POSTDIR_PTKPSD = "Не существует или нет доступа: "+$DirName
+      $GET_POSTDIR_PTKPSD = "РќРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚ РёР»Рё РЅРµС‚ РґРѕСЃС‚СѓРїР°: "+$DirName
    endif
 EndFunction
 
@@ -797,7 +797,7 @@ function GET_POSTDIR_IIS ($INI_File)
 ;begin
 
    ;-------------------------------------------------------
-   ; новый вариант
+   ; РЅРѕРІС‹Р№ РІР°СЂРёР°РЅС‚
    ;-------------------------------------------------------
    $IPAddr = ExtractWord(1,GetIP,"/")
    $LDomain_01 = GET_DOMAIN_USER ($IPAddr)
@@ -808,7 +808,7 @@ function GET_POSTDIR_IIS ($INI_File)
    endif
 
    ;-------------------------------------------------------
-   ; Старый вариант
+   ; РЎС‚Р°СЂС‹Р№ РІР°СЂРёР°РЅС‚
    ;-------------------------------------------------------
    if IsTerminalApplication
       $LDomain = @LDomain+"_STD"
@@ -826,7 +826,7 @@ function GET_POSTDIR_IIS ($INI_File)
       endif
    endif
    ;-----------------------------------------------------
-   ; по умолчанию
+   ; РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
    ;-----------------------------------------------------
    if $DirName = ""
       $DirName = ReadString ($INI_File, "GROUPS", $LDomain, "")
@@ -835,7 +835,7 @@ function GET_POSTDIR_IIS ($INI_File)
    if EXIST($DirName)
       $GET_POSTDIR_PTKPSD = $DirName + "\POST\TLG"
    else
-      $GET_POSTDIR_PTKPSD = "Не существует или нет доступа: "+$DirName
+      $GET_POSTDIR_PTKPSD = "РќРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚ РёР»Рё РЅРµС‚ РґРѕСЃС‚СѓРїР°: "+$DirName
    endif
 EndFunction
 
