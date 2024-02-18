@@ -5,32 +5,45 @@ rem -------------------------------------------------------------------
 chcp 1251>NUL
 
 setlocal enabledelayedexpansion
-rem setlocal enableextensions disabledelayedexpansion
-rem echo ERRORLEVEL: %ERRORLEVEL%
 
-rem PROJECTS - проект
+:begin
+rem -------------------------------------------------------------------
+rem PROJECTS - имя проекта
 set PROJECTS=PROJECTS_BAT
 rem echo PROJECTS: %PROJECTS%
+rem -------------------------------------------------------------------
+rem PROJECTS_LYR_DIR - каталог проектов
 set PROJECTS_LYR_DIR=D:\PROJECTS_LYR
 rem echo PROJECTS_LYR_DIR: %PROJECTS_LYR_DIR%
+rem -------------------------------------------------------------------
+rem PROJECTS_DIR - каталог проекта
 set PROJECTS_DIR=%PROJECTS_LYR_DIR%\CHECK_LIST\03_SCRIPT\04_BAT\%PROJECTS%
 rem echo PROJECTS_DIR: %PROJECTS_DIR%
-
+rem -------------------------------------------------------------------
 rem SCRIPT_FULLFILENAME - Файл скрипта [каталог+имя+расширение]
 set SCRIPT_FULLFILENAME=%0
 rem echo SCRIPT_FULLFILENAME: %SCRIPT_FULLFILENAME%
-rem SCRIPTS_DIR - Каталог скриптов BAT
+rem -------------------------------------------------------------------
+rem SCRIPTS_DIR - Каталог скриптов
 if "%SCRIPTS_DIR%" == "" (
     set SCRIPTS_DIR=D:\TOOLS\TOOLS_BAT
     set SCRIPTS_DIR=D:\PROJECTS_LYR\CHECK_LIST\03_SCRIPT\04_BAT\TOOLS_BAT
     set SCRIPTS_DIR=D:\PROJECTS_LYR\CHECK_LIST\03_SCRIPT\04_BAT\PROJECTS_BAT\TOOLS_BAT
 )
 rem echo SCRIPTS_DIR: %SCRIPTS_DIR%
+rem -------------------------------------------------------------------
+rem LIB_BAT - каталог библиотеки скриптов
+set LIB_BAT=%SCRIPTS_DIR%\LIB
+if not exist %LIB_BAT%\ (
+    echo ERROR: Каталог библиотеки LYR $LIB_BAT не существует...
+    exit /b 0
+)
+rem -------------------------------------------------------------------
 rem SCRIPTS_DIR_KIX - Каталог скриптов KIX
 if "%SCRIPTS_DIR_KIX%" == "" (
     set SCRIPTS_DIR_KIX=D:\TOOLS\TOOLS_KIX
-    set SCRIPTS_DIR_KIX=G:\PROJECTS_LYR\CHECK_LIST\03_SCRIPT\01_KIX\TOOLS_KIX
-    set SCRIPTS_DIR_KIX=G:\PROJECTS_LYR\CHECK_LIST\03_SCRIPT\01_KIX\PROJECTS_KIX\TOOLS_KIX
+    set SCRIPTS_DIR_KIX=D:\PROJECTS_LYR\CHECK_LIST\03_SCRIPT\01_KIX\TOOLS_KIX
+    set SCRIPTS_DIR_KIX=D:\PROJECTS_LYR\CHECK_LIST\03_SCRIPT\01_KIX\PROJECTS_KIX\TOOLS_KIX
 )
 rem echo SCRIPTS_DIR_KIX: %SCRIPTS_DIR_KIX%
 
@@ -41,10 +54,24 @@ call :__SET_VAR_SCRIPT %SCRIPT_FULLFILENAME% || exit /b 1
 call :__SET_VAR_DEFAULT || exit /b 1
 call :__SET_VAR_PROJECTS || exit /b 1
 call :__SET_CHECK_REPO || exit /b 1
-call :__SET_LOG || exit /b 1
-call :__SET_KIX || exit /b 1
+rem -------------------------------------------------------------------
+rem LOG_DT_FORMAT -
+set LOG_DT_FORMAT=
+rem -------------------------------------------------------------------
+rem LOG_FILENAME_FORMAT - Формат имени файла журнала [FILENAME,DATETIME,...]
+set LOG_FILENAME_FORMAT=
+rem -------------------------------------------------------------------
+rem LOG_OPT - Параметры журнала [11]
+set LOG_OPT=
+rem  -------------------------------------------------------------------
+rem LOG_DIR - Каталог журнала [каталог]
+set LOG_DIR=
+rem -------------------------------------------------------------------
+rem LOG_FILENAME - Файл журнала [имя]
+set LOG_FILENAME=
 
-:begin
+call :__SET_LOG || exit /b 1
+
 call :StartLogFile || exit /b 1
 
 echo ================================================================= >> %LOG_FULLFILENAME%
@@ -71,29 +98,27 @@ rem =================================================
 rem ФУНКЦИИ LIB
 rem =================================================
 :__SET_VAR_SCRIPT
-%SCRIPTS_DIR%\LIB\__SET_LIB.bat %*
+%LIB_BAT%\__SET_LIB.bat %*
 :__SET_VAR_DEFAULT
-%SCRIPTS_DIR%\LIB\__SET_LIB.bat %*
+%LIB_BAT%\__SET_LIB.bat %*
 exit /b 0
 :__SET_VAR_PROJECTS
-%SCRIPTS_DIR%\LIB\__SET_LIB.bat %*
+%LIB_BAT%\__SET_LIB.bat %*
 exit /b 0
 :__SET_CHECK_REPO
-%SCRIPTS_DIR%\LIB\__SET_LIB.bat %*
+%LIB_BAT%\__SET_LIB.bat %*
 exit /b 0
 :__SET_LOG
-%SCRIPTS_DIR%\LIB\__SET_LIB.bat %*
-:__SET_KIX
-%SCRIPTS_DIR%\LIB\__SET_LIB.bat %*
+%LIB_BAT%\__SET_LIB.bat %*
 exit /b 0
 :StartLogFile
-%SCRIPTS_DIR%\LIB\LYRLog.bat %*
+%LIB_BAT%\LYRLog.bat %*
 exit /b 0
 :StopLogFile
-%SCRIPTS_DIR%\LIB\LYRLog.bat %*
+%LIB_BAT%\LYRLog.bat %*
 exit /b 0
 :Check_P
-%SCRIPTS_DIR%\LIB\LYRSupport.bat %*
+%LIB_BAT%\LYRSupport.bat %*
 exit /b 0
 
 rem =================================================
