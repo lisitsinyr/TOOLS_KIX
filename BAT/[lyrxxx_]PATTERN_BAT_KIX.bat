@@ -145,22 +145,23 @@ rem beginfunction
     call :__SET_CHECK_REPO || exit /b 1
     rem -------------------------------------------------------------------
     rem LOG_DT_FORMAT -
-    set LOG_DT_FORMAT=
+    rem set LOG_DT_FORMAT=
     rem -------------------------------------------------------------------
     rem LOG_FILENAME_FORMAT - Формат имени файла журнала [FILENAME,DATETIME,...]
-    set LOG_FILENAME_FORMAT=
+    rem set LOG_FILENAME_FORMAT=
     rem -------------------------------------------------------------------
-    rem LOG_FILE_ADD - Параметры журнала [1]
-    set LOG_FILE_ADD=0
+    rem LOG_FILE_ADD - Параметры журнала [0]
+    if "%LOG_FILE_ADD%"=="" set LOG_FILE_ADD=0
+    rem echo LOG_FILE_ADD: %LOG_FILE_ADD%
     rem -------------------------------------------------------------------
     rem LOG_FILE_DT - Параметры журнала [0]
-    set LOG_FILE_DT=0
+    if "%LOG_FILE_DT%"=="" set LOG_FILE_DT=0
     rem  -------------------------------------------------------------------
     rem LOG_DIR - Каталог журнала [каталог]
-    set LOG_DIR=
+    rem set LOG_DIR=
     rem -------------------------------------------------------------------
     rem LOG_FILENAME - Файл журнала [имя]
-    set LOG_FILENAME=
+    rem set LOG_FILENAME=
     call :__SET_LOG || exit /b 1
 
     exit /b 0
