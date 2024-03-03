@@ -18,12 +18,8 @@ rem ----------------------------------------------------------------------------
     rem call :MAIN_SYNTAX || exit /b 1
     call :MAIN || exit /b 1
     call :StopLogFile || exit /b 1
-
     rem far -v %LOG_FULLFILENAME%
-
-    rem Выход из сценария. Дальше - только функции.
     rem cd /D %DIR_SAVE%
-
 :Exit
 exit /b 0
 rem --------------------------------------------------------------------------------
@@ -79,8 +75,7 @@ rem beginfunction
     rem  -------------------------------------------------------------------
     rem  DEBUG 1-включить DEBUG 0-выключить DEBUG
     set DEBUG=%2
-    echo DEBUG: %DEBUG%
-
+    rem echo DEBUG: %DEBUG%
     set FUNCNAME=%0
     if "%DEBUG%"=="1" (
         echo DEBUG: procedure %FUNCNAME% ...
@@ -88,37 +83,50 @@ rem beginfunction
 
     rem -------------------------------------------------------------------
     rem PROJECTS - имя проекта
-    set PROJECTS=PROJECTS_BAT
-    rem echo PROJECTS: %PROJECTS%
     rem -------------------------------------------------------------------
-    rem SCRIPT_FULLFILENAME - Файл скрипта [каталог+имя+расширение]
-    set SCRIPT_FULLFILENAME=%1
-    rem echo SCRIPT_FULLFILENAME: %SCRIPT_FULLFILENAME%
+    set PROJECTS=PROJECTS_BAT
+
     rem -------------------------------------------------------------------
     rem PROJECTS_LYR_DIR - каталог проектов
-    set PROJECTS_LYR_DIR=D:\PROJECTS_LYR
-    rem echo PROJECTS_LYR_DIR: %PROJECTS_LYR_DIR%
     rem -------------------------------------------------------------------
-    rem PROJECTS_DIR - каталог проекта
-    set PROJECTS_DIR=%PROJECTS_LYR_DIR%\CHECK_LIST\03_SCRIPT\04_BAT\%PROJECTS%
-    rem echo PROJECTS_DIR: %PROJECTS_DIR%
+    set PROJECTS_LYR_DIR=D:\PROJECTS_LYR
     rem -------------------------------------------------------------------
     rem SCRIPTS_DIR - Каталог скриптов
+    rem -------------------------------------------------------------------
     if "%SCRIPTS_DIR%" == "" (
         set SCRIPTS_DIR=D:\TOOLS\TOOLS_BAT
         set SCRIPTS_DIR=D:\PROJECTS_LYR\CHECK_LIST\03_SCRIPT\04_BAT\TOOLS_BAT
         set SCRIPTS_DIR=D:\PROJECTS_LYR\CHECK_LIST\03_SCRIPT\04_BAT\PROJECTS_BAT\TOOLS_BAT
     )
+    rem -------------------------------------------------------------------
+    rem SCRIPT_FULLFILENAME - Файл скрипта [каталог+имя+расширение]
+    rem -------------------------------------------------------------------
+    set SCRIPT_FULLFILENAME=%1
+    rem echo PROJECTS_LYR_DIR: %PROJECTS_LYR_DIR%
     rem echo SCRIPTS_DIR: %SCRIPTS_DIR%
+    rem echo SCRIPT_FULLFILENAME: %SCRIPT_FULLFILENAME%
+  
+    rem -------------------------------------------------------------------
+    rem PROJECTS_DIR - каталог проекта
+    rem -------------------------------------------------------------------
+    set PROJECTS_DIR=%PROJECTS_LYR_DIR%\CHECK_LIST\03_SCRIPT\04_BAT\%PROJECTS%
+    rem echo PROJECTS_DIR: %PROJECTS_DIR%
+
     rem -------------------------------------------------------------------
     rem LIB_BAT - каталог библиотеки скриптов
-    set LIB_BAT=%SCRIPTS_DIR%\LIB
+    rem -------------------------------------------------------------------
+    if "%LIB_BAT%" == "" (
+        set LIB_BAT=%SCRIPTS_DIR%\LIB
+        rem echo LIB_BAT: %LIB_BAT%
+    )
     if not exist %LIB_BAT%\ (
         echo ERROR: Каталог библиотеки LYR $LIB_BAT не существует...
         exit /b 0
     )
+
     rem -------------------------------------------------------------------
     rem SCRIPTS_DIR_KIX - Каталог скриптов KIX
+    rem -------------------------------------------------------------------
     if "%SCRIPTS_DIR_KIX%" == "" (
         set SCRIPTS_DIR_KIX=D:\TOOLS\TOOLS_KIX
         set SCRIPTS_DIR_KIX=D:\PROJECTS_LYR\CHECK_LIST\03_SCRIPT\01_KIX\TOOLS_KIX
@@ -214,13 +222,28 @@ rem beginfunction
         echo DEBUG: procedure %FUNCNAME% ...
     )
 
+    call :MAIN_FUNC || exit /b 1
+
+    rem call :Pause %SLEEP% || exit /b 1
+    rem call :PressAnyKey || exit /b 1
+
+    exit /b 0
+rem endfunction
+
+rem --------------------------------------------------------------------------------
+rem procedure MAIN_FUNC ()
+rem --------------------------------------------------------------------------------
+:MAIN_FUNC
+rem beginfunction
+    set FUNCNAME=%0
+    if "%DEBUG%"=="1" (
+        echo DEBUG: procedure %FUNCNAME% ...
+    )
+
     if exist %APP_KIX_DIR%\%APP_KIX% (
         echo START script %APP_KIX_DIR%\%APP_KIX% ... >> %LOG_FULLFILENAME%
         kix32.exe %APP_KIX_DIR%\%APP_KIX% "$P1=%1" "$P2=%2" "$P3=%3" "$P4=%4" "$P5=%5" "$P6=%6" "$P7=%7" "$P8=%8" "$P9=%9"
     )
-
-    rem call :Pause %SLEEP% || exit /b 1
-    rem call :PressAnyKey || exit /b 1
 
     exit /b 0
 rem endfunction
