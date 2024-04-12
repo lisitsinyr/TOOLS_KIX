@@ -1,1 +1,0 @@
-kix32.exe GroupsUsers.kix $Log1="c:\temp\GroupsUsers.log" %1

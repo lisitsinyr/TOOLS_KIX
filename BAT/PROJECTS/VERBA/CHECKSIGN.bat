@@ -1,5 +1,0 @@
-rem ------------------------------------------------------------------------------
-rem VerbaTools -f <files> [-o <crypt|decrypt|setsign|CHECKSIGN>] [-t <VERBA|tula>] [-from <from>] [-to <to1,...>]
-rem ------------------------------------------------------------------------------
-
-VerbaTools -f %1 -o CHECKSIGN -t VERBA
