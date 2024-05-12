@@ -102,14 +102,14 @@ rem beginfunction
     rem SCRIPT_FULLFILENAME - Файл скрипта [каталог+имя+расширение]
     rem -------------------------------------------------------------------
     set SCRIPT_FULLFILENAME=%1
-    rem echo PROJECTS_LYR_DIR: %PROJECTS_LYR_DIR%
+    rem echo PROJECTS_LYR_DIR: !PROJECTS_LYR_DIR!
     rem echo SCRIPTS_DIR: %SCRIPTS_DIR%
     rem echo SCRIPT_FULLFILENAME: %SCRIPT_FULLFILENAME%
   
     rem -------------------------------------------------------------------
     rem PROJECTS_DIR - каталог проекта
     rem -------------------------------------------------------------------
-    set PROJECTS_DIR=%PROJECTS_LYR_DIR%\CHECK_LIST\03_SCRIPT\04_BAT\%PROJECTS%
+    set PROJECTS_DIR=!PROJECTS_LYR_DIR!\CHECK_LIST\03_SCRIPT\04_BAT\%PROJECTS%
     rem echo PROJECTS_DIR: %PROJECTS_DIR%
 
     rem -------------------------------------------------------------------
