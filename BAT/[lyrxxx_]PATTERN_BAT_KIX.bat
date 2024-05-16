@@ -10,7 +10,7 @@ rem ----------------------------------------------------------------------------
 rem 
 rem --------------------------------------------------------------------------------
 :begin
-    call :MAIN_INIT %0 0 || exit /b 1
+    call :MAIN_INIT 0 || exit /b 1
     call :MAIN_SET || exit /b 1
     call :StartLogFile || exit /b 1
     rem set DIR_SAVE=%CURRENT_DIR%
@@ -36,7 +36,8 @@ exit /b 0
 :__SET_VAR_PROJECTS
 %LIB_BAT%\__SET_LIB.bat %*
 exit /b 0
-:__SET_CHECK_REPO
+:SET_CHECK_REPO
+
 %LIB_BAT%\__SET_LIB.bat %*
 exit /b 0
 :__SET_LOG
@@ -150,7 +151,8 @@ rem beginfunction
     call :__SET_VAR_DEFAULT %DEBUG% || exit /b 1
     call :__SET_VAR_SCRIPT %SCRIPT_FULLFILENAME% || exit /b 1
     call :__SET_VAR_PROJECTS || exit /b 1
-    call :__SET_CHECK_REPO || exit /b 1
+    call :SET_CHECK_REPO
+ || exit /b 1
     rem -------------------------------------------------------------------
     rem LOG_DT_FORMAT -
     rem set LOG_DT_FORMAT=
