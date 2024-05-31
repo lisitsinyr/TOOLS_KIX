@@ -173,9 +173,9 @@ function ScanFile ($ASourcePath, $ADestPath, $AMask, optional $ACheckSize, optio
 
             ;--------------------------------------------------------------------
             $LResult = CompareFileTimes($LFileNameSource, $LFileNameDest)
-	        if $Debug
-    	       LogAdd ("3", $LogFile, "F", "LResult="+$LResult, "w+/n")
-        	endif
+            if $Debug
+               LogAdd ("3", $LogFile, "F", "LResult="+$LResult, "w+/n")
+            endif
 
             ;--------------------------------------------------------------------
             ; Check Result
@@ -478,7 +478,6 @@ function ListFile ($ASourcePath, $AMask, optional $OutFile, optional $Option, op
             ;      endif
             ;endselect
             ;---------------------------------------------------------------------------------------
-
 
             if $FuncFile
                $s = '$$Res = $FuncFile ($$ListFile, $$LFileNameSource, $$LFileTimeSource, $$LFileSizeSource)'
