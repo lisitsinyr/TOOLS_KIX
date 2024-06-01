@@ -1,0 +1,221 @@
+;Function   ListNestedGroups()    
+;      
+;Authors NTDOC and Glenn Barnas  
+;     (Glenn came up with new method to Golf down the original code) 
+;      
+;Action     Retrieves a list of all the groups an account is a member of including 
+;     nested groups which normally are not seen.  This can be useful for locating 
+;     security holes where users have rights they shouldn't have due to nested groups. 
+; 
+;NOTE: 
+;     Based on The Scripting Guys code from here 
+;          MS Scripting Guys 
+; 
+;     Grabbing again from the MS Scripting Guys 
+;     Due to the way the Groups method and Active Directory work, normal scripts can't return  
+;     all of Ken Myer's group memberships unless it checks to see whether Groups A and B belong  
+;     to any other groups.  This script can now do that. 
+; 
+;     The Scripting Guys code shows the nested groups but also allowed duplicates to be returned. 
+;     This KiX UDF does not because the guys at Korg cared the most to bring you the best 
+;     In the example you'll see Administrators twice, but strictly speaking they're not duplicates 
+;     Running the Scripting Guys code returns 3 entries for Administrators 
+;          
+;     The Source looks large only because we commented it and showed a good example of running it 
+;      
+;Syntax     ListNestedGroups($_Account,Optional $_Nested)   
+;      
+;Version 1.0      
+;      
+;Date    2006-Mar-23      
+;      
+;Date Revised  xxxx-xxx-xx   
+;      
+;Revised Reason   
+;      
+;Parameters ListNestedGroups($_Account,Optional $_Nested)  
+;     $_Account = The full LDAP path to the account you want to check  
+;     $_Nested  = This is a two part flag to determine what nested groups to show  
+;     0 or blank = Show all groups including nested 
+;     1 = Show all groups but flag the nested groups with <Nested> tag 
+;     2 = Show only Nested groups 
+;      
+;Returns Array of the groups, or Error level on error 
+;      
+;Dependencies  None, this is a two part UDF that uses a sub-function to operate 
+;      
+;KiXtart Ver   Written and tested with KiXtart v4.52 beta 2 on 2000/XP/2003 against 2003-AD and 2000-AD 
+
+;Source 
+ 
+Function ListNestedGroups($_Account,Optional $_Nested)
+  Dim $_objUser, $_colGroups, $_objGroup, $_Grps, $_NFlag
+  Dim $_W, $_Element, $_TempString, $_OD, $_CN, $_ERR
+ 
+  ; init the vars 
+  $ListNestedGroups = 0                          ; default return value if errors occur 
+  $_Nested = Val($_Nested)                       ; force to numeric value 
+  $_NFlag = IIf($_Nested = 1, ' <Nested>', '')   ; set the output message for nested groups 
+ 
+  $_objUser = GetObject($_Account)               ; instantiate the object 
+  $_ERR = Val('&' + Right(DecToHex(@ERROR), 4))  ; get last 4 nybbles (2 bytes) of the error code 
+  If $_ERR Exit $_ERR EndIf
+ 
+  $_colGroups = $_objUser.Groups                 ; get the collection 
+ 
+  For Each $_objGroup in $_colGroups
+ 
+    $_OD = GetNested($_objGroup)                 ; nested group name 
+    $_CN = $_objGroup.CN                         ; parent group name 
+ 
+    ; Write the nested group name (and optional NESTED tag) to the index file 
+    If $_OD <> ''
+      If InStr($_TempString, $_OD) = 0
+         $_TempString = $_TempString + $_OD + $_NFlag + Chr(10)
+      EndIf
+    EndIf
+ 
+    ; write the parent group name to the index file, unless in nested-only mode 
+    If $_Nested < 2
+      If InStr($_TempString, $_CN) = 0
+         $_TempString = $_TempString + $_CN + Chr(10)
+      EndIf
+    EndIf
+ 
+  Next
+ 
+  ; enumerate the index and put the value(s) into an array 
+  $_Grps = Split(Left($_TempString,Len($_TempString)-1), Chr(10))
+ 
+  ; Return the array of groups, and exit with success 
+  $ListNestedGroups = $_Grps
+  Exit 0
+EndFunction
+ 
+; Sub-Function for returning nested groups 
+Function GetNested($objGroup)
+  Dim $_colMembers, $_strMember, $_strPath, $_objNestedGroup, $_ERR
+  ; init the return value to a null string 
+  $GetNested = ''
+  ; get the collection 
+  $_colMembers = $objGroup.GetEx("memberOf")
+  ; enumerate the collection 
+  For Each $_strMember in $_colMembers
+    $_strPath = "LDAP://" + $_strMember
+    $_objNestedGroup = GetObject($_strPath)
+    $GetNested = $_objNestedGroup.CN
+  Next
+  Exit 0
+EndFunction
+
+;Example Note: REQUIRES CombSort UDF to run this example as intended 
+;              CombSort() - The combsort algorithm for kixtart arrays  
+;              http://www.kixtart.org/ubbthreads/showflat.php?Cat=0&Number=81993 
+;              The ListNestedGroups UDF will run without CombSort, it just won't be sorted. 
+;Example:    
+ 
+ 
+Break On
+Dim $SO, $LDAP
+$SO=SetOption('Explicit','On')
+$SO=SetOption('NoVarsInStrings','On')
+$SO=SetOption('NoMacrosInStrings','On')
+ 
+   ; Need to fill in the $LDAP var with the account you want to get  
+   ; the list of groups for 
+$LDAP = "LDAP://CN=Ken Myer,OU=Finance,DC=fabrikam,DC=com"
+ 
+CLS
+Dim $Group, $Groups, $Index, $CC
+ 
+; Create and set an index to show numbers 
+$Index = 0
+ 
+; Grab the current console colors 
+$CC = @Color
+Color G+/R+
+'ALL Groups' ?
+ 
+; Reset the previous console colors back 
+Color $CC
+ 
+; Assign the returned data to $Groups var 
+; Make the call to CombSort() with the returned data from ListNestedGroups() UDF 
+; to sort the returned data 
+$Groups = CombSort(ListNestedGroups($LDAP, 0))
+ 
+If @ERROR
+  'Unexpected error retrieving groups. ' + @ERROR + ' - ' + @SERROR ?
+Else
+  If UBound($Groups) >= 0
+    For Each $Group In $Groups
+      ; Show our list of groups sorted, including the index number 
+      ''+$Index + ': ' + $Group ?
+ 
+      ; Increment the index 
+      $Index = $Index + 1
+    Next
+  EndIf
+EndIf
+ 
+$Index = 0
+$CC = @Color
+Color R+/W+
+? 'ALL Groups [ with nested flagged ]' ?
+Color $CC
+$Groups = CombSort(ListNestedGroups($LDAP, 1))
+If @ERROR
+  'Unexpected error retrieving groups. ' + @ERROR + ' - ' + @SERROR ?
+Else
+  If UBound($Groups) >= 0
+    For Each $Group In $Groups
+      ''+$Index + ': ' + $Group ?
+      $Index = $Index + 1
+    Next
+  EndIf
+EndIf
+ 
+$Index = 0
+$CC = @Color
+Color B+/W+
+? 'Nested Groups only' ?
+Color $CC
+$Groups = CombSort(ListNestedGroups($LDAP, 2))
+If @ERROR
+  'Unexpected error retrieving groups. ' + @ERROR + ' - ' + @SERROR ?
+Else
+  If UBound($Groups) >= 0
+    For Each $Group In $Groups
+      ''+$Index + ': ' + $Group ?
+      $Index = $Index + 1
+    Next
+  EndIf
+EndIf
+ 
+ 
+Function CombSort($v, Optional $o)
+  Dim $i,$j,$m,$s,$g,$n
+  $n=UBound($v)
+  $g = $n
+  If $g
+    While $g > 1 Or Not $s
+      $g=($g*1000)/1279
+      If $g < 1
+        $g = 1
+      EndIf
+      $s=1
+      For $i = 0 To $n-$g
+        $j=$i+$g
+        If ($v[$i] > $v[$j] And Not $o) Or ($v[$i] < $v[$j] And $o)
+          $m = $v[$i]
+          $v[$i] = $v[$j]
+          $v[$j] = $m
+          $s=0
+        EndIf
+      Next
+    Loop
+    $CombSort = $v
+  Else
+    $CombSort = 0
+  EndIf
+EndFunction
