@@ -46,6 +46,22 @@ setlocal enabledelayedexpansion
         exit /b 1
     )
 
+    rem Количество аргументов
+    call :Read_N %* || exit /b 1
+
+    call :SET_LIB %0 || exit /b 1
+
+rem --------------------------------------------------------------------------------
+rem 
+rem --------------------------------------------------------------------------------
+:begin
+    set BATNAME=%~nx0
+    echo Start !BATNAME! ...
+
+    set DEBUG=
+
+    set /a LOG_FILE_ADD=0
+
     rem -------------------------------------------------------------------
     rem SCRIPTS_DIR_KIX_SRC - Каталог скриптов KIX
     rem -------------------------------------------------------------------
@@ -70,24 +86,6 @@ setlocal enabledelayedexpansion
         echo ERROR: Directory !LIB_KIX! not exist ...
         exit /b 1
     )
-
-rem --------------------------------------------------------------------------------
-rem 
-rem --------------------------------------------------------------------------------
-:begin
-    set BATNAME=%~nx0
-    echo Start !BATNAME! ...
-
-    set DEBUG=
-    set /a LOG_FILE_ADD=0
-
-    rem Количество аргументов
-    call :Read_N %* || exit /b 1
-
-    call :SET_LIB %0 || exit /b 1
-
-    call :CurrentDir
-    rem echo CurrentDir:!CurrentDir!
 
     rem -------------------------------------
     rem OPTION
