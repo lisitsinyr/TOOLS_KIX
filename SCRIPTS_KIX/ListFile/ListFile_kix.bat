@@ -1,6 +1,6 @@
 @echo off
 rem -------------------------------------------------------------------
-rem PATTERN_kix.bat
+rem ListFile_kix.bat
 rem -------------------------------------------------------------------
 chcp 1251>NUL
 
@@ -26,30 +26,26 @@ setlocal enabledelayedexpansion
     )
 
     rem -------------------------------------------------------------------
-    rem SCRIPTS_DIR_SRC - Каталог скриптов BAT
+    rem SCRIPTS_DIR - Каталог скриптов BAT
     rem -------------------------------------------------------------------
-    if not defined SCRIPTS_DIR_SRC (
+    if not defined SCRIPTS_DIR (
         rem set SCRIPTS_DIR=D:\TOOLS\TOOLS_BAT
-        set SCRIPTS_DIR_SRC=!PROJECTS_LYR_DIR!\CHECK_LIST\SCRIPT\BAT\PROJECTS_BAT\TOOLS_SRC_BAT\SRC
+        rem set SCRIPTS_DIR=D:\PROJECTS_LYR\CHECK_LIST\SCRIPT\BAT\PROJECTS_BAT\TOOLS_SRC_BAT\SRC
+        set SCRIPTS_DIR=!PROJECTS_LYR_DIR!\CHECK_LIST\SCRIPT\BAT\PROJECTS_BAT\TOOLS_SRC_BAT\SRC
     )
-    rem echo SCRIPTS_DIR_SRC:!SCRIPTS_DIR_SRC!
+    rem echo SCRIPTS_DIR:!SCRIPTS_DIR!
 
     rem -------------------------------------------------------------------
     rem LIB_BAT - каталог библиотеки скриптов BAT
     rem -------------------------------------------------------------------
     if not defined LIB_BAT (
-        set LIB_BAT=!SCRIPTS_DIR_SRC!\LIB
+        set LIB_BAT=!SCRIPTS_DIR!\LIB
     )
     rem echo LIB_BAT:!LIB_BAT!
     if not exist !LIB_BAT!\ (
         echo ERROR: Каталог библиотеки LYR !LIB_BAT! не существует...
         exit /b 1
     )
-
-    rem Количество аргументов
-    call :Read_N %* || exit /b 1
-
-    call :SET_LIB %0 || exit /b 1
 
 rem --------------------------------------------------------------------------------
 rem 
@@ -58,35 +54,26 @@ rem ----------------------------------------------------------------------------
     set BATNAME=%~nx0
     echo Start !BATNAME! ...
 
-    set DEBUG=
-
-    set /a LOG_FILE_ADD=0
-
-
     rem -------------------------------------------------------------------
-    rem SCRIPTS_DIR_KIX_SRC - Каталог скриптов KIX
+    rem SCRIPTS_DIR_KIX - Каталог скриптов KIX
     rem -------------------------------------------------------------------
-    if not defined SCRIPTS_DIR_KIX_SRC (
-        set SCRIPTS_DIR_KIX_SRC=D:\PROJECTS_LYR\CHECK_LIST\SCRIPT\KIX\PROJECTS_KIX\TOOLS_SRC_KIX\SRC
+    if not defined SCRIPTS_DIR_KIX (
+        set SCRIPTS_DIR_KIX=D:\TOOLS\TOOLS_KIX
+        set SCRIPTS_DIR_KIX=D:\PROJECTS_LYR\CHECK_LIST\SCRIPT\KIX\PROJECTS_KIX\TOOLS_SRC_KIX\SCRIPTS
+        set SCRIPTS_DIR_KIX=D:\PROJECTS_LYR\CHECK_LIST\SCRIPT\KIX\PROJECTS_KIX\TOOLS_SRC_KIX
+        set SCRIPTS_DIR_KIX=D:\PROJECTS_LYR\CHECK_LIST\SCRIPT\KIX\PROJECTS_KIX\SCRIPTS_KIX\SRC\01.DEPLOY
     )
-    rem echo SCRIPTS_DIR_KIX_SRC:!SCRIPTS_DIR_KIX_SRC!
+    rem echo SCRIPTS_DIR_KIX:!SCRIPTS_DIR_KIX!
 
-    rem -------------------------------------------------------------------
-    rem LIB_KIX - Каталог библиотеки KIX 
-    rem -------------------------------------------------------------------
-    if not defined LIB_KIX (
-        echo INFO: Directory LIB_KIX not set ...
-        if "!COMPUTERNAME!"=="!USERDOMAIN!" (
-            set LIB_KIX=!SCRIPTS_DIR_KIX_SRC!\LIB
-        ) else (
-            set LIB_KIX=\\S73FS01\APPInfo\tools\LIB
-        )
-    )
-    rem echo LIB_KIX: !LIB_KIX!
-    if not exist !LIB_KIX! (
-        echo ERROR: Directory !LIB_KIX! not exist ...
-        exit /b 1
-    )
+    call :SET_KIX || exit /b 1
+
+    rem Количество аргументов
+    call :Read_N %* || exit /b 1
+
+    call :SET_LIB %0 || exit /b 1
+
+    call :CurrentDir
+    rem echo CurrentDir:!CurrentDir!
 
     rem -------------------------------------
     rem OPTION
@@ -94,7 +81,7 @@ rem ----------------------------------------------------------------------------
     set OPTION=
     set O1_Name=O1
     set O1_Caption=O1_Caption
-    set O1_Default=.
+    set O1_Default=O1_Default
     set O1=!O1_Default!
     set PN_CAPTION=!O1_Caption!
     call :Read_P O1 !O1! || exit /b 1
@@ -126,25 +113,8 @@ rem ----------------------------------------------------------------------------
     )
     echo ARGS:!ARGS!
 
-    rem -------------------------------------------------------------------
-    rem SCRIPTS_DIR_KIX - Каталог скриптов KIX
-    rem -------------------------------------------------------------------
-    if not defined SCRIPTS_DIR_KIX (
-        set SCRIPTS_DIR_KIX=D:\PROJECTS_LYR\CHECK_LIST\SCRIPT\KIX\PROJECTS_KIX\SCRIPTS_KIX\SRC\01.DEPLOY
-    )
-    rem echo SCRIPTS_DIR_PY:!SCRIPTS_DIR_PY!
-
-    rem -------------------------------------------------------------------
-    rem SCRIPT - 
-    rem -------------------------------------------------------------------
-    set SCRIPT_DIR=!SCRIPTS_DIR_KIX!\PATTERN
-    set SCRIPT_NAME=PATTERN.kix
-
-    rem set APP_KIX_DIR=!SCRIPT_DIR!
-    rem set APP_KIX=!SCRIPT_NAME!
-    rem call :SET_KIX || exit /b 1
-
-    set Dir=!O1!
+    set SCRIPT_DIR=!SCRIPTS_DIR_KIX!\ListFile
+    set SCRIPT_NAME=ListFile.kix
 
     if exist !SCRIPT_DIR!\!SCRIPT_NAME! (
         echo START !SCRIPT_DIR!\!SCRIPT_NAME! ... 
@@ -157,22 +127,9 @@ rem ----------------------------------------------------------------------------
 :end
 rem --------------------------------------------------------------------------------
 
-
 rem =================================================
 rem ФУНКЦИИ LIB
 rem =================================================
-
-rem =================================================
-rem LYRPY.bat
-rem =================================================
-:PY_ENV_START
-%LIB_BAT%\LYRPY.bat %*
-exit /b 0
-:PY_ENV_STOP
-%LIB_BAT%\LYRPY.bat %*
-exit /b 0
-rem =================================================
-
 rem =================================================
 rem LYRConst.bat
 rem =================================================
@@ -188,8 +145,6 @@ rem =================================================
 rem =================================================
 rem LYRFileUtils.bat
 rem =================================================
-:CurrentDir
-%LIB_BAT%\LYRFileUtils.bat %*
 rem =================================================
 rem LYRLog.bat
 rem =================================================
@@ -199,9 +154,6 @@ rem =================================================
 rem =================================================
 rem LYRSupport.bat
 rem =================================================
-:PressAnyKey
-%LIB_BAT%\LYRSupport.bat %*
-exit /b 0
 :Read_N
 %LIB_BAT%\LYRSupport.bat %*
 exit /b 0
